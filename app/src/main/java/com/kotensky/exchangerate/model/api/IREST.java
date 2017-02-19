@@ -18,4 +18,7 @@ public interface IREST {
     @GET ("/NBUStatService/v1/statdirectory/exchange")
     Observable<List<Currency>> getCurrencyList (@Query("date") String date, @Query("valcode") String currencyCode, @Query("json") boolean json);
 
+    @GET ("/NBUStatService/v1/statdirectory/exchange")
+    Observable<List<Currency>> getCurrencyListToday (@Query("json") boolean json);
+
 }

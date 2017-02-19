@@ -20,8 +20,11 @@ import rx.Observer;
 import rx.Subscription;
 import rx.subscriptions.Subscriptions;
 
-public class PresenterImpl implements IPresenter{
+import static android.content.ContentValues.TAG;
 
+public class PresenterImpl implements IPresenter {
+
+    private static final String TAG = "PresenterImpl";
 
     private IModel model = new ModelImpl();
 
@@ -29,45 +32,81 @@ public class PresenterImpl implements IPresenter{
 
     private Subscription subscription = Subscriptions.empty();
 
+    private List<Date> dates;
 
-    public PresenterImpl (IView view){
+    private List<Currency> currencyList;
+
+    private SimpleDateFormat dateFormat;
+
+    public PresenterImpl(IView view) {
         this.view = view;
     }
 
     @Override
     public void loadData() {
-        if (!subscription.isUnsubscribed()){
+        if (!subscription.isUnsubscribed()) {
             subscription.unsubscribe();
         }
-        final List<Currency> currencyList = new ArrayList<>();
+        currencyList = new ArrayList<>();
 
-        List<Date> dates = model.getDaysBetweenDates(view.getFirstDate(), view.getLastDate());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-        for (int i = 0; i<dates.size(); i++) {
-            subscription = model.getCurrencyOfDate(dateFormat.format(dates.get(i)), view.getCurrencyCode())
-                    .subscribe(new Observer<List<Currency>>() {
-                        @Override
-                        public void onCompleted() {
-                            view.showData(currencyList);
-                        }
+        dates = model.getDaysBetweenDates(view.getFirstDate(), view.getLastDate());
+        dateFormat = new SimpleDateFormat("yyyyMMdd");
+        getItem(0, dates.size() - 1);
+    }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            view.showError(e.getMessage());
-                        }
-
-                        @Override
-                        public void onNext(List<Currency> currencies) {
-                            currencyList.add(currencies.get(0));
-                        }
-                    });
+    @Override
+    public void loadTodayList() {
+        if (!subscription.isUnsubscribed()) {
+            subscription.unsubscribe();
         }
+        subscription = model.getCurrencyListToday()
+                .subscribe(new Observer<List<Currency>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<Currency> currencies) {
+                        view.showCurrencyList(currencies);
+                    }
+                });
     }
 
     @Override
     public void onStop() {
-        if (!subscription.isUnsubscribed()){
+        if (!subscription.isUnsubscribed()) {
             subscription.unsubscribe();
         }
+    }
+
+    private void getItem(final int current, final int last) {
+        subscription = model.getCurrencyOfDate(dateFormat.format(dates.get(current)), view.getCurrencyCode())
+                .subscribe(new Observer<List<Currency>>() {
+                    @Override
+                    public void onCompleted() {
+                        if (current < last) {
+                            getItem(current + 1, last);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        view.showError(e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(List<Currency> currencies) {
+                        currencyList.add(currencies.get(0));
+                        view.showData(currencyList);
+
+                    }
+                });
+
     }
 }

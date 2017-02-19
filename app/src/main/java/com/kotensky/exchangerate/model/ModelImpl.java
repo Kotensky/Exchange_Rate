@@ -32,6 +32,15 @@ public class ModelImpl implements IModel {
     }
 
     @Override
+    public Observable<List<Currency>> getCurrencyListToday() {
+        return iRest.getCurrencyListToday(true)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+
+
+    @Override
     public List<Date> getDaysBetweenDates(Date startdate, Date enddate) {
         List<Date> dates = new ArrayList<>();
         Calendar calendar = new GregorianCalendar();

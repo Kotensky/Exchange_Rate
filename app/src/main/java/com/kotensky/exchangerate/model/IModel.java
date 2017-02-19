@@ -15,5 +15,7 @@ public interface IModel {
 
     Observable<List<Currency>> getCurrencyOfDate (String date, String currencyCode);
 
+    Observable<List<Currency>> getCurrencyListToday ();
+
     List<Date> getDaysBetweenDates(Date startdate, Date enddate);
 }

@@ -8,5 +8,7 @@ public interface IPresenter {
 
     void loadData();
 
+    void loadTodayList();
+
     void onStop();
 }

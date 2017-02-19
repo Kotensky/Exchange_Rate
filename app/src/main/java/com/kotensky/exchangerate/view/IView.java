@@ -11,9 +11,11 @@ import java.util.List;
 
 public interface IView {
 
-    void showError (String s);
+    void showError(String s);
 
-    void showData (List<Currency> currencyList);
+    void showData(List<Currency> currencyList);
+
+    void showCurrencyList(List<Currency> currencyListToday);
 
     Date getFirstDate();
 

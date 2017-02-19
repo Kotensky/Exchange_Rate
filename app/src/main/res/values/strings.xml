@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">Exchange rate</string>
+    <string name="app_name">Курс валют</string>
     <string name="start_date">Початкова дата:</string>
     <string name="end_date">Кінцева дата</string>
+    <string name="currency">Валюта</string>
     <string name="analysis">Аналіз</string>
 </resources>
